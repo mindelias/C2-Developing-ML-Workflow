@@ -1,0 +1,36 @@
+{
+  "Comment": "Image Classification Workflow",
+  "StartAt": "SerializeImageData",
+  "States": {
+    "SerializeImageData": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-west-2:869935066996:function:serializeImageData:$LATEST",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "Next": "ClassifyImage"
+    },
+    "ClassifyImage": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-west-2:869935066996:function:imageClassifier:$LATEST",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "Next": "FilterInferences"
+    },
+    "FilterInferences": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-west-2:869935066996:function:filterInferences:$LATEST",
+        "Payload.$": "$"
+      },
+      "OutputPath": "$.Payload",
+      "End": true
+    }
+  }
+}
